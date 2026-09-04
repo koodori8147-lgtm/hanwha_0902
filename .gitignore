@@ -1,0 +1,7 @@
+**/.firstenv/
+**/.firstvenv/
+**/.secondvenv/
+**/.thirdvenv/
+**/.venv/
+**/__pycache__/
+*.pyc
