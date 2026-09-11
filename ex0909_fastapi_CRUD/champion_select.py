@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Literal
 
 app = FastAPI()
@@ -13,7 +13,7 @@ class ChampionSchema(BaseModel):
 
 #추천 데이터 구조
 class RecommendSchema(BaseModel):
-    money: int
+    money: int = Field(ge=0)
     attack_range: Literal["근접", "원거리"]
     role: Literal["서포터", "딜러", "탱커"]
 
@@ -31,7 +31,7 @@ champions_db: dict[int, dict] = {
         "id": 2,
         "name": "애쉬",
         "price": 450,
-        "attack_range": "원거리"
+        "attack_range": "원거리",
         "role": "딜러"
     },
     3: {
@@ -64,11 +64,12 @@ champions_db: dict[int, dict] = {
         "price": 4800,
         "attack_range": "원거리",
         "role": "딜러"
+    },
     7: {
         "id": 7,
         "name": "카타리나",
         "price": 3150,
-        "attack_range": "원거리",
+        "attack_range": "근접",
         "role": "딜러"
     },
 
@@ -94,6 +95,7 @@ champions_db: dict[int, dict] = {
         "price": 450,
         "attack_range": "원거리",
         "role": "서포터"
+    },
     11: {
         "id": 11,
         "name": "룰루",
@@ -123,10 +125,11 @@ champions_db: dict[int, dict] = {
         "name": "트위치",
         "price": 4800,
         "attack_range": "원거리",
-        "role": "딜러"    
+        "role": "딜러"
+    }    
 }
 
-id_counter = 14
+id_counter = 15
 
 #생성 Create
 @app.post("/champions", status_code=201)
@@ -139,7 +142,7 @@ async def create_champion(champion: ChampionSchema):
     id_counter += 1
 
     return {
-        "message": "챔피언 등록 완료"
+        "message": "챔피언 등록 완료",
         "data": new_champion
     }
 
@@ -147,7 +150,7 @@ async def create_champion(champion: ChampionSchema):
 @app.get("/champions")
 async def get_all_champions():
 
-    return {"message": "전체 챔피언 조회 완료", "data": list(champions_db_db.values())}
+    return {"message": "전체 챔피언 조회 완료", "data": list(champions_db.values())}
 
 #조회 (단일)Read
 @app.get("/champions/{champion_id}")
@@ -169,7 +172,7 @@ async def update_champion(champion_id: int, champion: ChampionSchema):
 
     return {"message": "챔피언 수정 완료", "data": updated_data}
 
-#삭제 Delete 204
+#삭제 Delete 200
 @app.delete("/champions/{champion_id}")
 async def delete_champion(champion_id: int):
 
@@ -210,7 +213,7 @@ async def recommend_champion(user: RecommendSchema):
         ]
 
 
-         if perfect_match:
+        if perfect_match:
             return {
                 "message": "사거리와 역할군이 모두 일치하는 챔피언입니다.",
                 "data": perfect_match
