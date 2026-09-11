@@ -11,7 +11,7 @@ else:
 
     try:
         client = OpenAI(api_key=api_key)
-
+ 
         client.models.list()
 
         print("✅ OpenAI API 연결 성공")
